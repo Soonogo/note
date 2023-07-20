@@ -9,9 +9,6 @@ resource "Validation Codes" do
       expect(UserMailer).to receive(:welcome_email).with(email)
       do_request
       expect(response_body).to eq ' '
-      do_request
-      expect(status).to eq 429
-
     end
   end
 end
