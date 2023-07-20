@@ -48,3 +48,5 @@ group :development do
   # gem "spring"
 end
 
+
+gem "rspec_api_documentation"
