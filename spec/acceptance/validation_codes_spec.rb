@@ -6,6 +6,7 @@ resource "Validation Codes" do
     parameter :email,type: :string,required:true
     let(:email){'1@qq.com'}
     example "Listing items" do
+      expect(UserMailer).to receive(:welcome_email).with(email)
       do_request
       expect(response_body).to eq ' '
     end

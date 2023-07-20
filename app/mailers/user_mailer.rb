@@ -1,7 +1,7 @@
 class UserMailer < ApplicationMailer
-    def welcome_email(code)
-        @code = code
+    def welcome_email(email)
+        @code = ValidationCode.find_by_email(email).code
     
-        mail(to: "tttsongen@gmail.com", subject: 'Welcome to My Awesome Site')
+        mail(to: email, subject: 'Welcome to My Awesome Site')
       end
 end
