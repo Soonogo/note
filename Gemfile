@@ -50,3 +50,5 @@ end
 
 
 gem "rspec_api_documentation"
+
+gem "jwt", "~> 2.7"
