@@ -8,7 +8,6 @@ RSpec.describe "Sessions", type: :request do
       expect(response).to have_http_status(200)
       json = JSON.parse response.body
       expect(json["jwt"]).to be_a(String)
-      p json["jwt"]
     end
   end
 end
