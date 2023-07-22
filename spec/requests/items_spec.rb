@@ -8,9 +8,7 @@ RSpec.describe "Items", type: :request do
         Item.create amount:10,user_id:User1.id
       end
       expect(Item.count).to eq(11)
-      post "/api/v1/session",params:{email:"1@qq.com",code:"123456"}
-      jwt = JSON.parse(response.body)["jwt"]
-      get "/api/v1/items",headers: {'Authorization' => "Bearer #{jwt}"}
+      get "/api/v1/items",headers:  User1.generate_jwt_header
       expect(response).to have_http_status(200)
       json = JSON.parse(response.body)
       expect(json["resource"].length).to eq 10
@@ -22,21 +20,17 @@ RSpec.describe "Items", type: :request do
       Item1 = Item.create amount:100,created_at:Time.new(2019,1,2),user_id:User1.id
       Item2 = Item.create amount:100,created_at:Time.new(2020,1,1),user_id:User2.id
       end
-      post "/api/v1/session",params:{email:"1@qq.com",code:"123456"}
-      jwt = JSON.parse(response.body)["jwt"]
-      get "/api/v1/items",headers: {'Authorization' => "Bearer #{jwt}"}
+      get "/api/v1/items",headers:  User1.generate_jwt_header
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["resource"].length).to eq 10
-      get "/api/v1/items?page=2",headers: {'Authorization' => "Bearer #{jwt}"}
+      get "/api/v1/items?page=2",headers:  User1.generate_jwt_header
       expect(JSON.parse(response.body)["resource"].length).to eq 1
     end
     it "can filter items" do
       User1 = User.create email:"1@qq.com"
       Item1 = Item.create amount:100,created_at:Time.new(2019,1,2),user_id:User1.id
       Item2 = Item.create amount:100,created_at:Time.new(2020,1,1),user_id:User1.id
-      post "/api/v1/session",params:{email:"1@qq.com",code:"123456"}
-      jwt = JSON.parse(response.body)["jwt"]
-      get "/api/v1/items?created_after=2019-01-01&created_before=2019-01-03",headers: {'Authorization' => "Bearer #{jwt}"}
+      get "/api/v1/items?created_after=2019-01-01&created_before=2019-01-03",headers:  User1.generate_jwt_header
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["resource"].length).to eq 1
       expect(JSON.parse(response.body)["resource"][0]["id"]).to eq Item1.id
@@ -45,9 +39,7 @@ RSpec.describe "Items", type: :request do
       User1 = User.create email:"1@qq.com"
       Item1 = Item.create amount:100,created_at:Time.new(2019,1,2),user_id:User1.id
       Item2 = Item.create amount:100,created_at:Time.new(2020,1,1),user_id:User1.id
-      post "/api/v1/session",params:{email:"1@qq.com",code:"123456"}
-      jwt = JSON.parse(response.body)["jwt"]
-      get "/api/v1/items?created_after=2019-01-02",headers: {'Authorization' => "Bearer #{jwt}"}
+      get "/api/v1/items?created_after=2019-01-02",headers: User1.generate_jwt_header
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["resource"].length).to eq 1
       expect(JSON.parse(response.body)["resource"][0]["id"]).to eq Item2.id
@@ -56,9 +48,8 @@ RSpec.describe "Items", type: :request do
       User1 = User.create email:"1@qq.com"
       Item1 = Item.create amount:100,created_at:Time.new(2019,1,2),user_id:User1.id
       Item2 = Item.create amount:100,created_at:Time.new(2020,1,1),user_id:User1.id
-      post "/api/v1/session",params:{email:"1@qq.com",code:"123456"}
-      jwt = JSON.parse(response.body)["jwt"]
-      get "/api/v1/items?created_before=2019-01-03",headers: {'Authorization' => "Bearer #{jwt}"}
+     
+      get "/api/v1/items?created_before=2019-01-03",headers: User1.generate_jwt_header
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["resource"].length).to eq 1
       expect(JSON.parse(response.body)["resource"][0]["id"]).to eq Item1.id
@@ -68,9 +59,7 @@ RSpec.describe "Items", type: :request do
 
       Item1 = Item.create amount:100,created_at:Time.new(2019,1,1,0,0,0,"+00:00"),user_id:User1.id
       Item2 = Item.create amount:100,created_at:Time.new(2020,1,1),user_id:User1.id
-      post "/api/v1/session",params:{email:"1@qq.com",code:"123456"}
-      jwt = JSON.parse(response.body)["jwt"]
-      get "/api/v1/items?created_after=2019-01-01&created_before=2019-01-03",headers: {'Authorization' => "Bearer #{jwt}"}
+      get "/api/v1/items?created_after=2019-01-01&created_before=2019-01-03",headers:  User1.generate_jwt_header
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["resource"].length).to eq 1
       expect(JSON.parse(response.body)["resource"][0]["id"]).to eq Item1.id
