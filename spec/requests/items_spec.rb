@@ -20,6 +20,22 @@ RSpec.describe "Items", type: :request do
       expect(JSON.parse(response.body)["resource"].length).to eq 1
       expect(JSON.parse(response.body)["resource"][0]["id"]).to eq Item1.id
     end
+    it "can filter items2" do
+      Item1 = Item.create amount:100,created_at:Time.new(2019,1,2)
+      Item2 = Item.create amount:100,created_at:Time.new(2020,1,1)
+      get "/api/v1/items?created_after=2019-01-02"
+      expect(response).to have_http_status(200)
+      expect(JSON.parse(response.body)["resource"].length).to eq 1
+      expect(JSON.parse(response.body)["resource"][0]["id"]).to eq Item2.id
+    end
+    it "can filter items3" do
+      Item1 = Item.create amount:100,created_at:Time.new(2019,1,2)
+      Item2 = Item.create amount:100,created_at:Time.new(2020,1,1)
+      get "/api/v1/items?created_before=2019-01-03"
+      expect(response).to have_http_status(200)
+      expect(JSON.parse(response.body)["resource"].length).to eq 1
+      expect(JSON.parse(response.body)["resource"][0]["id"]).to eq Item1.id
+    end
     it "can filter items(Time zone boundary)" do
       Item1 = Item.create amount:100,created_at:Time.new(2019,1,1,0,0,0,"+00:00")
       Item2 = Item.create amount:100,created_at:Time.new(2020,1,1)
