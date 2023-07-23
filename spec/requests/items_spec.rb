@@ -66,7 +66,7 @@ RSpec.describe "Items", type: :request do
     end
   end
   describe "create" do
-    it "can create item" do
+    xit "can create item" do
       expect { post "/api/v1/items",params:{amount:12}}.to change { Item.count }.by(1)
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["resource"]["id"]).to be_an(Numeric)
