@@ -53,7 +53,7 @@ RSpec.describe "Tags", type: :request do
       patch '/api/v1/tags'
       expect(response).to have_http_status(401)
     end
-    it "modify tags" do
+    it "update tags field" do
       user1 = User.create email:"tttsongen@foxmail.com"
       tag = Tag.create name:"tag",sign:"x",user_id:user1.id
         patch "/api/v1/tags/#{tag.id}",headers:user1.generate_jwt_header,params:{sign:"s",name:"n"}
@@ -61,14 +61,32 @@ RSpec.describe "Tags", type: :request do
         expect(JSON.parse(response.body)["resource"]["sign"]).to eq("s")
         expect(JSON.parse(response.body)["resource"]["name"]).to eq("n")
     end
-    it "post tags" do
+    it "update tags field" do
       user1 = User.create email:"tttsongen@foxmail.com"
       tag = Tag.create name:"tag",sign:"x",user_id:user1.id
         patch "/api/v1/tags/#{tag.id}",headers:user1.generate_jwt_header,params:{sign:"s"}
         expect(response).to have_http_status(200)
         expect(JSON.parse(response.body)["resource"]["sign"]).to eq("s")
         expect(JSON.parse(response.body)["resource"]["name"]).to eq("tag")
-
+    end
+  end
+  describe "delete" do
+    it "not sign_in" do
+      delete '/api/v1/tags'
+      expect(response).to have_http_status(401)
+    end
+    it "delete tags" do
+      user1 = User.create email:"tttsongen@foxmail.com"
+      tag = Tag.create name:"tag",sign:"x",user_id:user1.id
+        delete "/api/v1/tags/#{tag.id}",headers:user1.generate_jwt_header
+        expect(response).to have_http_status(200)
+    end
+    it "delete other user tags" do
+      user1 = User.create email:"1@foxmail.com"
+      user2 = User.create email:"2@foxmail.com"
+      tag = Tag.create name:"tag",sign:"x",user_id:user2.id
+        delete "/api/v1/tags/#{tag.id}",headers:user1.generate_jwt_header
+        expect(response).to have_http_status(403)
     end
     
   end

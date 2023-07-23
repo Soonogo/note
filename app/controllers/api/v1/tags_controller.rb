@@ -28,4 +28,14 @@ class Api::V1::TagsController < ApplicationController
             render json:{errors:tag.errors},status:422
         end
     end
+    def destroy
+        tag = Tag.find params[:id]
+        return head :forbidden unless tag.user_id === request.env['current_user_id']
+        tag.deleted_at = Time.now
+        if tag.save
+            render status:200
+        else
+            render json:{errors:tag.errors},status:422
+        end
+    end
 end
