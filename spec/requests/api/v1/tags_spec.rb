@@ -87,6 +87,7 @@ RSpec.describe "Tags", type: :request do
       tag = Tag.create name:"tag",sign:"x",user_id:user2.id
         delete "/api/v1/tags/#{tag.id}",headers:user1.generate_jwt_header
         expect(response).to have_http_status(403)
+        expect(tag.reload.deleted_at).to eq(nil)
     end
     
   end
@@ -105,7 +106,7 @@ RSpec.describe "Tags", type: :request do
       expect(JSON.parse(response.body)["resource"]["name"]).to eq("tag")
       expect(JSON.parse(response.body)["resource"]["id"]).to eq tag.id
     end
-    it "delete other user tags" do
+    it "get other user tags" do
       user1 = User.create email:"1@foxmail.com"
       user2 = User.create email:"2@foxmail.com"
       tag = Tag.create name:"tag",sign:"x",user_id:user2.id
