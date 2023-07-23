@@ -48,4 +48,28 @@ RSpec.describe "Tags", type: :request do
         expect(json["errors"]["sign"][0]).to eq("can't be blank")
     end
   end
+  describe "update" do
+    it "not sign_in" do
+      patch '/api/v1/tags'
+      expect(response).to have_http_status(401)
+    end
+    it "modify tags" do
+      user1 = User.create email:"tttsongen@foxmail.com"
+      tag = Tag.create name:"tag",sign:"x",user_id:user1.id
+        patch "/api/v1/tags/#{tag.id}",headers:user1.generate_jwt_header,params:{sign:"s",name:"n"}
+        expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body)["resource"]["sign"]).to eq("s")
+        expect(JSON.parse(response.body)["resource"]["name"]).to eq("n")
+    end
+    it "post tags" do
+      user1 = User.create email:"tttsongen@foxmail.com"
+      tag = Tag.create name:"tag",sign:"x",user_id:user1.id
+        patch "/api/v1/tags/#{tag.id}",headers:user1.generate_jwt_header,params:{sign:"s"}
+        expect(response).to have_http_status(200)
+        expect(JSON.parse(response.body)["resource"]["sign"]).to eq("s")
+        expect(JSON.parse(response.body)["resource"]["name"]).to eq("tag")
+
+    end
+    
+  end
 end

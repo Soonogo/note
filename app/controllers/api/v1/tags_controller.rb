@@ -18,6 +18,14 @@ class Api::V1::TagsController < ApplicationController
         else
             render json:{errors:tag.errors},status:422
         end
-
+    end
+    def update
+        tag = Tag.find params[:id]
+        tag.update params.permit(:name,:sign)
+        if tag.errors.empty?
+            render json:{resource:tag},status:200
+        else
+            render json:{errors:tag.errors},status:422
+        end
     end
 end
