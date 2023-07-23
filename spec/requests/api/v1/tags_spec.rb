@@ -90,4 +90,28 @@ RSpec.describe "Tags", type: :request do
     end
     
   end
+  describe "get tags" do
+    it "not sign_in" do
+      user = User.create email:"1@qq.com"
+      tag = Tag.create name:"tag",sign:"x",user_id:user.id
+      get "/api/v1/tags/#{tag.id}"
+      expect(response).to have_http_status(401)
+    end
+    it "get tags" do
+      user = User.create email:"1@qq.com"
+      tag = Tag.create name:"tag",sign:"x",user_id:user.id
+      get "/api/v1/tags/#{tag.id}",headers:user.generate_jwt_header
+      expect(response).to have_http_status(200)
+      expect(JSON.parse(response.body)["resource"]["name"]).to eq("tag")
+      expect(JSON.parse(response.body)["resource"]["id"]).to eq tag.id
+    end
+    it "delete other user tags" do
+      user1 = User.create email:"1@foxmail.com"
+      user2 = User.create email:"2@foxmail.com"
+      tag = Tag.create name:"tag",sign:"x",user_id:user2.id
+      get "/api/v1/tags/#{tag.id}",headers:user1.generate_jwt_header
+        expect(response).to have_http_status(403)
+    end
+    
+  end
 end
