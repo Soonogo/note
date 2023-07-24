@@ -66,11 +66,17 @@ RSpec.describe "Items", type: :request do
     end
   end
   describe "create" do
-    xit "can create item" do
-      expect { post "/api/v1/items",params:{amount:12}}.to change { Item.count }.by(1)
+    it "not sign_in" do
+      post "/api/v1/items",params:{amount:12}
+      expect(response).to have_http_status(401)
+    end
+    it "can create item" do
+      user = User.create email:"1@qq.com"
+      expect { post "/api/v1/items",params:{amount:12},headers:user.generate_jwt_header}.to change { Item.count }.by(1)
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["resource"]["id"]).to be_an(Numeric)
       expect(JSON.parse(response.body)["resource"]["amount"]).to eq 12
+      expect(JSON.parse(response.body)["resource"]["user_id"]).to eq user.id
     end
   end
 end
