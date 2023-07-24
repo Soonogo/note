@@ -13,4 +13,5 @@ class Item < ApplicationRecord
             self.errors.add :tags_id, "tag is not belong to user"
         end
     end
+    
 end
