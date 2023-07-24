@@ -72,11 +72,22 @@ RSpec.describe "Items", type: :request do
     end
     it "can create item" do
       user = User.create email:"1@qq.com"
-      expect { post "/api/v1/items",params:{amount:12},headers:user.generate_jwt_header}.to change { Item.count }.by(1)
+      tag1 = Tag.create name:"tag1",user_id:user.id,sign:"x"
+      tag2 = Tag.create name:"tag2",user_id:user.id,sign:"x"
+      expect { post "/api/v1/items",params:{amount:12,tags_id:[tag1.id,tag2.id],happen_at:'2018-01-01T00:00:00+08:00'},headers:user.generate_jwt_header}.to change { Item.count }.by(1)
       expect(response).to have_http_status(200)
       expect(JSON.parse(response.body)["resource"]["id"]).to be_an(Numeric)
       expect(JSON.parse(response.body)["resource"]["amount"]).to eq 12
       expect(JSON.parse(response.body)["resource"]["user_id"]).to eq user.id
+      expect(JSON.parse(response.body)["resource"]["happen_at"]).to eq '2017-12-31T16:00:00.000Z'
+    end
+    it "Required field amount/tags_id/happen_at" do
+      user = User.create email:"1@qq.com"
+      post "/api/v1/items",params:{},headers:user.generate_jwt_header
+      expect(response).to have_http_status(422)
+      expect(JSON.parse(response.body)["errors"]["tags_id"][0]).to eq "can't be blank"
+      expect(JSON.parse(response.body)["errors"]["amount"][0]).to eq "can't be blank"
+      expect(JSON.parse(response.body)["errors"]["happen_at"][0]).to eq "can't be blank"
     end
   end
 end

@@ -10,12 +10,12 @@ class Api::V1::ItemsController < ApplicationController
     }}
   end
   def create
-    item = Item.new params.permit(:amount,:happen_at,:tags_id)
+    item = Item.new params.permit(:amount,:happen_at,tags_id:[])
     item.user_id = request.env['current_user_id']
     if item.save 
       render json:{resource:item}
     else
-      render json:{errors:item.errors}
+      render json:{errors:item.errors},status: :unprocessable_entity
     end
   end
 end
