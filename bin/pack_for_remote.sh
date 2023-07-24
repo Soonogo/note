@@ -9,7 +9,6 @@ deploy_dir=/home/$user/deploys/$time
 gemfile=$current_dir/../Gemfile
 gemfile_lock=$current_dir/../Gemfile.lock
 vendor_dir=$current_dir/../vendor
-vendor_1=rspec_api_documentation
 
 function title {
   echo 
@@ -23,10 +22,9 @@ function title {
 mkdir -p $cache_dir
 title '打包源代码'
 tar --exclude="tmp/cache/*" --exclude="tmp/deploy_cache/*" --exclude="vendor/*" -cz -f $dist *
-title "打包本地依赖 ${vendor_1}"
+title "打包本地依赖 "
 bundle cache --quiet
 tar -cz -f "$vendor_dir/cache.tar.gz" -C ./vendor cache
-tar -cz -f "$vendor_dir/$vendor_1.tar.gz" -C ./vendor $vendor_1
 title '创建远程目录'
 ssh $user@$ip "mkdir -p $deploy_dir/vendor"
 title '上传源代码和依赖'
